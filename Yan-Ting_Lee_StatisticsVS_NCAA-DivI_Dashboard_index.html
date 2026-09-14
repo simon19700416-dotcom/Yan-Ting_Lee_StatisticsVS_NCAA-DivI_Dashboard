@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StatisticsVS · Yan-Ting Lee vs NCAA Division I (Male, 0.0)</title>
+<style>
+  :root{
+    --green-deep:#0e5c3f; --green:#1a8a5c; --green-soft:#e6f4ee;
+    --blue:#2f6fd6; --blue-soft:#eaf1fc;
+    --red:#d64545; --red-soft:#fdeeee;
+    --ink:#1c2b26; --ink-2:#5b6b64; --line:#e3e9e5; --bg:#f6f8f7; --card:#ffffff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Segoe UI",-apple-system,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+  .wrap{max-width:1080px;margin:0 auto;padding:28px 20px 60px}
+
+  /* ---------- hero ---------- */
+  .hero{background:linear-gradient(135deg,#0e5c3f 0%,#14714d 55%,#1a8a5c 100%);border-radius:18px;color:#fff;padding:34px 36px 30px;position:relative;overflow:hidden}
+  .hero::after{content:"⛳";position:absolute;right:28px;top:22px;font-size:64px;opacity:.18}
+  .hero .kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;opacity:.75;margin-bottom:8px}
+  .hero h1{font-size:30px;font-weight:800;letter-spacing:.01em}
+  .hero .sub{margin-top:10px;font-size:14px;opacity:.88}
+  .hero .tags{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}
+  .hero .tag{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:4px 14px;font-size:12.5px}
+
+  /* ---------- KPI ---------- */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:18px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .kpi .label{font-size:12.5px;color:var(--ink-2)}
+  .kpi .value{font-size:26px;font-weight:800;margin-top:4px}
+  .kpi .note{font-size:12px;color:var(--ink-2);margin-top:4px}
+  .kpi.good .value{color:var(--green)}
+  .kpi.bad .value{color:var(--red)}
+  .kpi.mid .value{color:var(--blue)}
+
+  /* ---------- sections & charts ---------- */
+  section{margin-top:34px}
+  h2{font-size:19px;font-weight:800;display:flex;align-items:center;gap:10px}
+  h2 .bar{width:5px;height:20px;border-radius:3px;background:var(--green)}
+  .sec-sub{font-size:13px;color:var(--ink-2);margin:6px 0 16px}
+
+  .cat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+  .cat-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 18px 12px}
+  .cat-card h3{font-size:14.5px;font-weight:700;margin-bottom:2px}
+  .cat-card .en{font-size:11.5px;color:var(--ink-2);margin-bottom:12px}
+  .mrow{padding:8px 0;border-top:1px dashed var(--line)}
+  .mrow:first-of-type{border-top:none}
+  .mrow .mname{display:flex;justify-content:space-between;gap:8px;font-size:12.5px}
+  .mrow .mname b{font-weight:600}
+  .mrow .mgap{font-weight:800;white-space:nowrap}
+  .mgap.up{color:var(--green)} .mgap.down{color:var(--red)} .mgap.flat{color:var(--blue)}
+  .duo{display:flex;gap:6px;margin-top:6px;align-items:center}
+  .duo .tag{font-size:10.5px;color:var(--ink-2);width:44px;flex:none}
+  .duo .track{flex:1;height:9px;border-radius:5px;background:#eef2f0;overflow:hidden;display:flex}
+  .duo .fill{height:100%}
+  .fill.p{background:var(--green-deep)} .fill.n{background:#b9c6bf}
+  .duo .val{font-size:11px;color:var(--ink-2);width:64px;text-align:right;flex:none;font-variant-numeric:tabular-nums}
+
+  /* ---------- table ---------- */
+  .table-card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  thead th{background:#f0f5f2;color:var(--ink-2);font-size:12px;letter-spacing:.05em;text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+  tbody td{padding:10px 14px;border-bottom:1px solid #eef2f0;vertical-align:middle}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:#fafcfb}
+  td.num{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+  th.num{text-align:right}
+  .badge{display:inline-block;border-radius:999px;padding:2px 10px;font-size:11.5px;font-weight:700;white-space:nowrap}
+  .badge.up{background:var(--green-soft);color:var(--green)}
+  .badge.down{background:var(--red-soft);color:var(--red)}
+  .badge.flat{background:var(--blue-soft);color:var(--blue)}
+  td .cat-chip{font-size:11px;color:var(--ink-2);background:#f2f5f3;border-radius:6px;padding:2px 8px}
+  .en-name{display:block;font-size:11px;color:var(--ink-2);font-weight:400}
+
+  /* ---------- insight ---------- */
+  .insight{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:760px){.insight{grid-template-columns:1fr}}
+  .ins-card{border-radius:14px;padding:20px 22px;border:1px solid var(--line);background:var(--card)}
+  .ins-card.strength{border-left:5px solid var(--green)}
+  .ins-card.weakness{border-left:5px solid var(--red)}
+  .ins-card h3{font-size:14.5px;margin-bottom:10px}
+  .ins-card ul{list-style:none}
+  .ins-card li{font-size:13px;padding:5px 0;display:flex;justify-content:space-between;gap:10px;border-bottom:1px dashed var(--line)}
+  .ins-card li:last-child{border-bottom:none}
+  .ins-card li span:last-child{font-weight:700;white-space:nowrap}
+
+  .legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-2);margin-top:14px}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+  .foot{margin-top:36px;font-size:12px;color:var(--ink-2);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="kicker">Circles &middot; Statistics VS</div>
+    <h1>Yan-Ting Lee vs NCAA Division I Male Average (0.0)</h1>
+    <div class="sub">Full performance-indicator comparison &middot; Gap = Yan-Ting Lee &minus; NCAA Division I benchmark &middot; Status derived from each metric&rsquo;s direction</div>
+    <div class="tags">
+      <span class="tag">Benchmark: Male NCAA Div I Avg (0.0)</span>
+      <span class="tag">25 performance indicators</span>
+      <span class="tag">Source: Circles</span>
+      <span class="tag">Generated: 2026-09-14</span>
+    </div>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <section>
+    <h2><span class="bar"></span>Category Comparison</h2>
+    <div class="sec-sub">Each indicator shows Yan-Ting Lee (dark green) against the NCAA Division I benchmark (grey); bar length is normalised to the larger value in the pair.</div>
+    <div class="cat-grid" id="catGrid"></div>
+    <div class="legend">
+      <span><i style="background:var(--green-deep)"></i>Yan-Ting Lee</span>
+      <span><i style="background:#b9c6bf"></i>NCAA Div I Avg</span>
+      <span><i style="background:var(--green)"></i>Ahead</span>
+      <span><i style="background:var(--blue)"></i>On par</span>
+      <span><i style="background:var(--red)"></i>Behind</span>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="bar"></span>Biggest Strengths &amp; Priority Gaps</h2>
+    <div class="insight" style="margin-top:14px">
+      <div class="ins-card strength">
+        <h3>&#9989; Ahead of the NCAA average</h3>
+        <ul id="topStrengths"></ul>
+      </div>
+      <div class="ins-card weakness">
+        <h3>&#9888;&#65039; Largest gaps to close</h3>
+        <ul id="topWeaknesses"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="bar"></span>Full Data Table</h2>
+    <div class="sec-sub">Gap values match the source table exactly. &ldquo;Status&rdquo; is determined by each metric&rsquo;s direction (lower-is-better / higher-is-better); a relative gap under 2.5% is treated as on par.</div>
+    <div class="table-card" style="margin-top:14px">
+      <table>
+        <thead>
+          <tr>
+            <th>Performance Indicator</th><th>Category</th>
+            <th class="num">Yan-Ting Lee</th>
+            <th class="num">NCAA Div I Avg</th>
+            <th class="num">Gap</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="foot">
+    Source: Circles &ldquo;Statistics VS &mdash; MALE NCAA DIV I AVG (0.0)&rdquo; &middot; For training and recruiting reference only<br>
+    Yan-Ting Lee (Adonis Lee) &middot; Aiming for an NCAA Division I men&rsquo;s golf roster spot
+  </div>
+</div>
+
+<script>
+// name, category, player, ncaa, unit, lowerIsBetter, gap (as shown in source)
+const M = [
+  ["Score vs Par","Scoring",1.49,0.81,"",true,"0.68"],
+  ["Pars per round","Scoring",10.93,11.35,"",false,"0.42"],
+  ["Birdie or better per round","Scoring",3.16,3.31,"",false,"0.15"],
+  ["Birdie or better (%)","Scoring",17.57,16.80,"%",false,"1.23%"],
+  ["Birdie Conversion (%)","Scoring",24.10,27.46,"%",false,"3.36%"],
+  ["Bogey or worse per round","Scoring",3.91,3.34,"",true,"0.57"],
+  ["Bogey or worse (%)","Scoring",21.74,18.94,"%",true,"2.77%"],
+  ["GIR (%)","Approach",64.34,64.64,"%",false,"0.30%"],
+  ["Recovery Shots per Round","Short Game",0.09,0.13,"",false,"0.14"],
+  ["Penalty strokes per round","Scoring",1.3,0.77,"",true,"0.53"],
+  ["Sandsaves (%)","Short Game",51.85,47.34,"%",false,"4.51%"],
+  ["Scrambling (%)","Short Game",53.91,56.83,"%",false,"2.92%"],
+  ["Putts per hole","Putting",1.66,1.65,"",true,"0.01"],
+  ["Putts per GIR","Putting",1.84,1.80,"",true,"0.04"],
+  ["Total distance of all Putts made per round","Putting",71.81,71.32,"ft",true,"0.49ft"],
+  ["One-Putt rate: All Distances (%)","Putting",32.44,37.55,"%",false,"5.11%"],
+  ["Three-Putt rate: All Distances (%)","Putting",4.02,3.23,"%",true,"0.79%"],
+  ["Par 3, Average Score","Par 3/4/5",3.29,3.16,"",true,"0.12"],
+  ["Par 3, Birdie or Better (%)","Par 3/4/5",17.69,16.25,"%",false,"1.44%"],
+  ["Par 4, Average Score","Par 3/4/5",4.07,4.11,"",true,"0.04"],
+  ["Par 4, Par or Better (%)","Par 3/4/5",64.19,60.23,"%",false,"3.96%"],
+  ["Par 4, Birdie or better (%)","Par 3/4/5",16.25,15.07,"%",false,"1.13%"],
+  ["Par 5, Average Score","Par 3/4/5",4.92,4.75,"",true,"0.17"],
+  ["Par 5, Par or Better (%)","Par 3/4/5",72.09,75.68,"%",false,"3.59%"],
+  ["Par 5, Birdie or Better (%)","Par 3/4/5",30.53,30.36,"%",false,"2.13%"]
+];
+
+function statusOf(row){
+  const [name,cat,p,n,unit,lib] = row;
+  const base = n || 1e-9;
+  const rel = lib ? (n-p)/base : (p-n)/base;   // positive = ahead of benchmark
+  if(rel >= 0.025)  return {k:"up",  t:"Ahead",  rel};
+  if(rel <= -0.025) return {k:"down",t:"Behind", rel};
+  return {k:"flat", t:"On par", rel};
+}
+function fmt(v,unit){
+  let s = (v % 1 === 0 && !String(v).includes(".")) ? String(v) : v.toFixed(2).replace(/0$/,"");
+  if(unit==="%") s += "%"; if(unit==="ft") s += "ft";
+  return s;
+}
+
+/* ---- KPI ---- */
+const st = M.map(r=>({r, s:statusOf(r)}));
+const up = st.filter(x=>x.s.k==="up"), down = st.filter(x=>x.s.k==="down"), flat = st.filter(x=>x.s.k==="flat");
+const bestUp = up.slice().sort((a,b)=>b.s.rel-a.s.rel)[0];
+const worstDown = down.slice().sort((a,b)=>a.s.rel-b.s.rel)[0];
+document.getElementById("kpis").innerHTML = [
+  ["Indicators Ahead", up.length+" metrics", "Better than the NCAA Div I average","good"],
+  ["On Par", flat.length+" metrics", "Relative gap under 2.5%","mid"],
+  ["Behind", down.length+" metrics", "Below the NCAA Div I average","bad"],
+  ["Biggest Strength", bestUp.r[0].replace(" (%)",""), "+"+bestUp.r[6]+" ("+bestUp.r[1]+")","good"],
+  ["Priority Gap", worstDown.r[0].replace(" (%)",""), worstDown.r[6]+" ("+worstDown.r[1]+")","bad"]
+].map(k=>`<div class="kpi ${k[3]}"><div class="label">${k[0]}</div><div class="value">${k[1]}</div><div class="note">${k[2]}</div></div>`).join("");
+
+/* ---- category charts ---- */
+const cats = {};
+st.forEach(x=>{ (cats[x.r[1]] ||= []).push(x); });
+document.getElementById("catGrid").innerHTML = Object.entries(cats).map(([cat,rows])=>{
+  const inner = rows.map(({r,s})=>{
+    const max = Math.max(r[2],r[3])||1;
+    const w1 = (r[2]/max*100).toFixed(1), w2 = (r[3]/max*100).toFixed(1);
+    return `<div class="mrow">
+      <div class="mname"><b>${r[0].replace(" (%)","")}${r[4]==="%"?" (%)":""}</b>
+        <span class="mgap ${s.k}">${r[6]}</span></div>
+      <div class="duo"><span class="tag">LEE</span>
+        <div class="track"><div class="fill p" style="width:${w1}%"></div></div>
+        <span class="val">${fmt(r[2],r[4])}</span></div>
+      <div class="duo"><span class="tag">NCAA</span>
+        <div class="track"><div class="fill n" style="width:${w2}%"></div></div>
+        <span class="val">${fmt(r[3],r[4])}</span></div>
+    </div>`;
+  }).join("");
+  return `<div class="cat-card"><h3>${cat}</h3><div class="en">${rows.length} indicator${rows.length>1?"s":""}</div>${inner}</div>`;
+}).join("");
+
+/* ---- insight lists ---- */
+const fmtLi = x=>`<li><span>${x.r[0]}</span><span style="color:var(--${x.s.k==="up"?"green":"red"})">${x.r[6]}</span></li>`;
+document.getElementById("topStrengths").innerHTML = up.sort((a,b)=>b.s.rel-a.s.rel).slice(0,5).map(fmtLi).join("");
+document.getElementById("topWeaknesses").innerHTML = down.sort((a,b)=>a.s.rel-b.s.rel).slice(0,5).map(fmtLi).join("");
+
+/* ---- table ---- */
+document.getElementById("tbody").innerHTML = st.map(({r,s})=>`
+  <tr>
+    <td><b>${r[0]}</b></td>
+    <td><span class="cat-chip">${r[1]}</span></td>
+    <td class="num"><b>${fmt(r[2],r[4])}</b></td>
+    <td class="num">${fmt(r[3],r[4])}</td>
+    <td class="num" style="font-weight:800;color:var(--${s.k==="up"?"green":s.k==="down"?"red":"blue"})">${r[6]}</td>
+    <td><span class="badge ${s.k}">${s.t}</span></td>
+  </tr>`).join("");
+</script>
+</body>
+</html>
